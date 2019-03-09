@@ -2,7 +2,8 @@ var http = require('http');
 
 var server = http.createServer(function(req, res){
 	var path_vars = req.url.split('/');
-	switch(path_vars[0]){
+	console.log('path_vars: ', path_vars);
+	switch(path_vars[1]){
 		case 'index':
 			res.end('index');
 			break;
@@ -18,27 +19,29 @@ var server = http.createServer(function(req, res){
 		case 'login': 
 			res.end('login');
 			break;
-		case '/onboard-advertiser':
+		case 'onboard-advertiser':
 			res.end('onboard-advertiser')
 			break;
-		case '/onboard-retailer':
+		case 'onboard-retailer':
 			res.end('/onboard-retailer');
 			break;
-		case '/create-shipping-label':
-			createShippingLabelInteractor();
-
-			res.end('/create-shipping-label');
+		case 'create-shipping-label':
+			createShippingLabelInteractor(function(err, shipment){
+				console.log('err: ', err);
+				console.log('shipment: ', shipment);
+				res.end('/create-shipping-label');
+			});
 			break;
-		case '/users':
+		case 'users':
 			res.end('/users');
 			break;
-		case '/coupons':
+		case 'coupons':
 			res.end('/coupons');
 			break;
-		case '/shipping-quotes':
+		case 'shipping-quotes':
 			res.end('/shipping-quotes');
 			break;
-		case '/printed-labels':
+		case 'printed-labels':
 			res.end('printed-labels');
 			break;
 		case 'logout':
@@ -55,42 +58,43 @@ var server = http.createServer(function(req, res){
 });
 
 
-function createShippingLabelInteractor(){
+function createShippingLabelInteractor(cb){
 	var shippo = require('shippo')(__dirname+'/_config/creds.js'.SHIPPO_KEY);
 
-var addressFrom  = {
-    "name": "Shawn Ippotle",
-    "street1": "215 Clayton St.",
-    "city": "San Francisco",
-    "state": "CA",
-    "zip": "94117",
-    "country": "US"
-};
+	var addressFrom  = {
+	    "name": "Shawn Ippotle",
+	    "street1": "215 Clayton St.",
+	    "city": "San Francisco",
+	    "state": "CA",
+	    "zip": "94117",
+	    "country": "US"
+	};
 
-var addressTo = {
-    "name": "Mr Hippo",
-    "street1": "Broadway 1",
-    "city": "New York",
-    "state": "NY",
-    "zip": "10007",
-    "country": "US"
-};
+	var addressTo = {
+	    "name": "Mr Hippo",
+	    "street1": "Broadway 1",
+	    "city": "New York",
+	    "state": "NY",
+	    "zip": "10007",
+	    "country": "US"
+	};
 
-var parcel = {
-    "length": "5",
-    "width": "5",
-    "height": "5",
-    "distance_unit": "in",
-    "weight": "2",
-    "mass_unit": "lb"
-};
+	var parcel = {
+	    "length": "5",
+	    "width": "5",
+	    "height": "5",
+	    "distance_unit": "in",
+	    "weight": "2",
+	    "mass_unit": "lb"
+	};
 
-shippo.shipment.create({
-    "address_from": addressFrom,
-    "address_to": addressTo,
-    "parcels": [parcel],
-    "async": false
-}, function(err, shipment){
-    // asynchronously called
-});
+	shippo.shipment.create({
+	    "address_from": addressFrom,
+	    "address_to": addressTo,
+	    "parcels": [parcel],
+	    "async": false
+	}, function(err, shipment){
+	    if (err) return cb('err: ', err);
+	    return cb(null, shipment);
+	});
 }

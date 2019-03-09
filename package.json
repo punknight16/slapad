@@ -1,0 +1,24 @@
+{
+  "name": "slapad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://punknight16:Mydogriley16***@github.com/punknight16/slapad.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/punknight16/slapad/issues"
+  },
+  "homepage": "https://github.com/punknight16/slapad#readme",
+  "dependencies": {
+    "shippo": "^1.3.1"
+  }
+}
