@@ -1,0 +1,66 @@
+<html>
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container">
+		<h1>Documentation</h1>
+		<h4>0. Overview</h4>
+		<p class="lead">Let's increase the profit margin of ecommerce retailers</p>
+
+		<p><strong>Why?</strong> This website is built soley for the purpose of following my dream of becoming an entrepreneur. I have been struggling working on passion projects for the past two years, and my wife pointed out that no one is likely to pay for them. I started reaching out to cofounders on reddit to see if anyone else had an idea that people might actually pay for. Kangsan and Kyu Jin were looking for a technical cofounder. They had a solution to a problem in an emerging market, and thus, thought it could be very profitable.</p>
+
+		<p><strong>How?</strong> We are creating a market for advertisers to buy advertisement space on packaging from ecommerce retailers. Advertisers upload coupon templates and select how many coupons they would like to print on the shipping labels of ecommerce packages. Ecommerce retailers upload the shipping information of individual buyers, and after selecting a carrier, they can print a shipping label with a coupon on it at a discounted price.</p>
+
+		<p><strong>What?</strong> We are selling shipping labels with space for advertisements to reduce the cost of shipping paid by ecommerce retailers. 
+
+		<h4>1. Getting Started</h4>
+		<p class="lead">This is a simple platform for creating a shipping label</p>
+
+		<p>Start using the application by heading to the register page at "/register". The current version of the application  has 3 types of users: an <strong>advertiser</strong>, a <strong>retailer</strong>, and a <strong>moderator</strong>. At anytime, these users can login, logout, and deactivate-account.</p>
+
+		<p><strong>Advertisers</strong> start at the splash page where they click on a call-to-action. At this point they register (or login if already register). After the initial registration, they are sent to an onboard page, where the advertiser is encouraged to upload a coupon template. After uploading a coupon template, the advertiser is redirected to checkout. Whether the advertiser completes checkout or not, they are redirected to a table of all of their uploaded coupon_templates, along with the balance on each template.</p>
+
+		<p><strong>Retailers</strong> start at the splash page where they click on a call-to-action. At this point they register (or login if already register). After the initial registration, they are sent to an onboard page, where the retailer is encouraged to upload shipping information. After uploading shipping information, the retailer is directed to a link_page, where they can select a coupon_template, a carrier, and preview a shipping label with a coupon printed on it. Once the retailer is satisfied with the preview shipping label, they are redirected to checkout. If they complete checkout, they are sent to a print_page. From the print_page they can go back to the link_objs table.</p>
+
+		<p><strong>Moderators</strong> may login and are given access to five menu items: users, advertisements, shipping_objects, and link_objects, general_ledger. The users page sorts users by role. If a particular user is clicked, that user's engagements are listed in chronological order.</p> The advertisements page is a table of advertisements, sorted by how much was paid for each advertisement. Clicking and advertisement shows the coupon_template. The shipping_objects page is a table of shipping_objects, sorted by date. Inspection shows the quote through shippo. The link_page is a table of shipping labels, sorted by payment amount. Inspection shows the printable coupon. The general_ledger page is a table of transactions. This includes sales of coupon_templates and shipping labels, along with redemption payouts of coupon_templates and shipping labels. 
+			
+		<h4>2. Release Info</h4>
+		<strong>Version 1.1</strong>
+		<p>Simple html pages were created for the following routes:</p>
+			<ul>
+				<li>/index</li>
+				<li>/documentation</li>
+				<li>/registration</li>
+				<li>/login</li>
+				<li>/onboard-advertiser</li>
+				<li>/onboard-retailer</li>
+				<li>/create-shipping-label</li>
+				<li>/users</li>
+				<li>/coupons</li>
+				<li>/shipping-quotes</li>
+				<li>/printed-labels</li>
+				<li>/logout</li> 
+				<li>/deactivate-account</li>
+			</ul>
+		<p>From the /users, /coupons, and /printed-labels routes you can send post forms:</p>
+			<ul>
+				<li>add-v1.1</li>
+				<li>remove-v1.1</li>
+				<li>edit-v1.1</li>
+				<li>inspect-v1.1</li>
+			</ul>
+		<p>Some of this functionality will be turned on or off depending on the type of user.</p>
+		
+
+		<h4>3. FAQ</h4>
+		<p><strong>Q:</strong> Trouble Logging in?<br />
+		<strong>A:</strong> Try email: "<em>u0@mail.com</em>", "<em>u1@mail.com</em>", or "<em>u2@mail.com</em>" with password: "<em>123</em>". If that doesn't work the server is down. Otherwise, you might have to reset your password. Just email me at punknight16@gmail.com</p>
+		 
+		<h4>4. Issue Tracking</h4>
+		<p>We are using github for this:</p>
+		<a href='https://github.com/punknight16/slapad/issues'>add issues here</a>
+
+	</div>
+<body>
+</html>
