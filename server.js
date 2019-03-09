@@ -1,5 +1,9 @@
 var http = require('http');
 
+var config = {
+	SHIPPO_KEY: require('./_config/creds.js').SHIPPO_KEY
+}
+
 var server = http.createServer(function(req, res){
 	var path_vars = req.url.split('/');
 	console.log('path_vars: ', path_vars);
@@ -26,7 +30,7 @@ var server = http.createServer(function(req, res){
 			res.end('/onboard-retailer');
 			break;
 		case 'create-shipping-label':
-			createShippingLabelInteractor(function(err, shipment){
+			createShippingLabelInteractor(config, function(err, shipment){
 				console.log('err: ', err);
 				console.log('shipment: ', shipment);
 				res.end('/create-shipping-label');
@@ -58,8 +62,10 @@ var server = http.createServer(function(req, res){
 });
 
 
-function createShippingLabelInteractor(cb){
-	var shippo = require('shippo')(__dirname+'/_config/creds.js'.SHIPPO_KEY);
+function createShippingLabelInteractor(config, cb){
+	console.log("using SHIPPO_KEY: ", config.SHIPPO_KEY);
+	var shippo = require('shippo')(config.SHIPPO_KEY);
+	
 
 	var addressFrom  = {
 	    "name": "Shawn Ippotle",
