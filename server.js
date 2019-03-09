@@ -25,6 +25,8 @@ var server = http.createServer(function(req, res){
 			res.end('/onboard-retailer');
 			break;
 		case '/create-shipping-label':
+			createShippingLabelInteractor();
+
 			res.end('/create-shipping-label');
 			break;
 		case '/users':
@@ -51,3 +53,44 @@ var server = http.createServer(function(req, res){
 }).listen(3000, function(){
 	console.log('server is running on port 3000');
 });
+
+
+function createShippingLabelInteractor(){
+	var shippo = require('shippo')(__dirname+'/_config/creds.js'.SHIPPO_KEY);
+
+var addressFrom  = {
+    "name": "Shawn Ippotle",
+    "street1": "215 Clayton St.",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip": "94117",
+    "country": "US"
+};
+
+var addressTo = {
+    "name": "Mr Hippo",
+    "street1": "Broadway 1",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10007",
+    "country": "US"
+};
+
+var parcel = {
+    "length": "5",
+    "width": "5",
+    "height": "5",
+    "distance_unit": "in",
+    "weight": "2",
+    "mass_unit": "lb"
+};
+
+shippo.shipment.create({
+    "address_from": addressFrom,
+    "address_to": addressTo,
+    "parcels": [parcel],
+    "async": false
+}, function(err, shipment){
+    // asynchronously called
+});
+}
