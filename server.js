@@ -63,44 +63,46 @@ var server = http.createServer(function(req, res){
 
 
 function createShippingLabelInteractor(config, cb){
-	console.log("using SHIPPO_KEY: ", config.SHIPPO_KEY);
-	var shippo = require('shippo')(config.SHIPPO_KEY);
-	
+	if(config.SHIPPO_KEY===null){
+		return cb('this route cannot be used unless on the deploy branch');
+	} else {
+		var shippo = require('shippo')(config.SHIPPO_KEY);
 
-	var addressFrom  = {
-	    "name": "Shawn Ippotle",
-	    "street1": "215 Clayton St.",
-	    "city": "San Francisco",
-	    "state": "CA",
-	    "zip": "94117",
-	    "country": "US"
-	};
+		var addressFrom  = {
+		    "name": "Shawn Ippotle",
+		    "street1": "215 Clayton St.",
+		    "city": "San Francisco",
+		    "state": "CA",
+		    "zip": "94117",
+		    "country": "US"
+		};
 
-	var addressTo = {
-	    "name": "Mr Hippo",
-	    "street1": "Broadway 1",
-	    "city": "New York",
-	    "state": "NY",
-	    "zip": "10007",
-	    "country": "US"
-	};
+		var addressTo = {
+		    "name": "Mr Hippo",
+		    "street1": "Broadway 1",
+		    "city": "New York",
+		    "state": "NY",
+		    "zip": "10007",
+		    "country": "US"
+		};
 
-	var parcel = {
-	    "length": "5",
-	    "width": "5",
-	    "height": "5",
-	    "distance_unit": "in",
-	    "weight": "2",
-	    "mass_unit": "lb"
-	};
+		var parcel = {
+		    "length": "5",
+		    "width": "5",
+		    "height": "5",
+		    "distance_unit": "in",
+		    "weight": "2",
+		    "mass_unit": "lb"
+		};
 
-	shippo.shipment.create({
-	    "address_from": addressFrom,
-	    "address_to": addressTo,
-	    "parcels": [parcel],
-	    "async": false
-	}, function(err, shipment){
-	    if (err) return cb('err: ', err);
-	    return cb(null, shipment);
-	});
+		shippo.shipment.create({
+		    "address_from": addressFrom,
+		    "address_to": addressTo,
+		    "parcels": [parcel],
+		    "async": false
+		}, function(err, shipment){
+		    if (err) return cb('err: ', err);
+		    return cb(null, shipment);
+		});
+	}
 }
