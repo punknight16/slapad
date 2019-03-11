@@ -1,4 +1,5 @@
 var http = require('http');
+var fs = require('fs');
 
 var config = {
 	SHIPPO_KEY: require('./_config/creds.js').SHIPPO_KEY
@@ -9,19 +10,36 @@ var server = http.createServer(function(req, res){
 	console.log('path_vars: ', path_vars);
 	switch(path_vars[1]){
 		case 'index':
-			res.end('index');
+			var stream = fs.createReadStream(__dirname+'/_pages/index.html');
+			stream.pipe(res);
 			break;
 		case 'documentation':
-			res.end('documentation');
+			var stream = fs.createReadStream(__dirname+'/_pages/documentation.html');
+			stream.pipe(res);
 			break;
-		case 'splash':
-			res.end('splash');
+		case '_imgs':
+			var file = __dirname+'/_imgs/'+path_vars[2];
+			fs.exists(file, function(exists){
+				if(exists){
+					var stream = fs.createReadStream(file);
+					stream.pipe(res);	
+				} else {
+					res.statusCode = 404;
+					res.end('404: file not found');
+				}
+			});
+			break;
+		case 'landing':
+			var stream = fs.createReadStream(__dirname+'/_pages/landing.html');
+			stream.pipe(res);
 			break;
 		case 'register':
-			res.end('register');
+			var stream = fs.createReadStream(__dirname+'/_pages/register.html');
+			stream.pipe(res);
 			break;
 		case 'login': 
-			res.end('login');
+			var stream = fs.createReadStream(__dirname+'/_pages/login.html');
+			stream.pipe(res);
 			break;
 		case 'onboard-advertiser':
 			res.end('onboard-advertiser')
