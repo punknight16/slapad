@@ -44,12 +44,17 @@ var error = function(res, err_msg){
 };
 
 var displayTemplate = function(res, msg, template=null, args={}){
-	console.log('args: ', args);
-	var template_path = "./_templates/"+template;
-	var full_args = Object.assign(args, {msg: msg});
-	console.log("full_args: ", full_args);
-	var stream = mu.compileAndRender(template_path, full_args);
-	stream.pipe(res);
+	if(template==null){
+		var template_path = "./_templates/success.html";
+		console.log('msg: ', msg);
+		var stream = mu.compileAndRender(template_path, {msg: msg});
+		stream.pipe(res);	
+	} else {
+		var template_path = "./_templates/"+template;
+		var full_args = Object.assign(args, {msg: msg});
+		var stream = mu.compileAndRender(template_path, full_args);
+		stream.pipe(res);	
+	}
 }
 
 var server = http.createServer(function(req, res){
@@ -104,6 +109,8 @@ var server = http.createServer(function(req, res){
 				if(post_obj.hasOwnProperty('form_id')){
 					var args = Object.assign(post_obj, {path: path, path_vars: path_vars});
 					templateRouter(data, config, args, ext, function(err, msg, template, confirm_args){
+						console.log("err: ", err);
+						console.log("msg: ", msg);
 						displayTemplate(res, msg, template, confirm_args)
 					});	
 				} else {
@@ -120,7 +127,7 @@ var server = http.createServer(function(req, res){
 
 
 function templateRouter(data, config, args, ext, cb){
-	switch(args.path){
+	switch(args.path[0]){
 		case 'shipping-information':
 			return cb(null, 'shipping-information')
 			break;
