@@ -3,6 +3,12 @@ var fs = require('fs');
 var mu = require("mu2-updated"); //mustache template engine
 
 var receivePostData = require('./_models/receive-post-data');
+var receiveCookieData = require('./_models/receive-cookie-data');
+//post interactors
+var registerInteractor = require('./_scripts/register-interactor');
+var loginInteractor = require('./_scripts/login-interactor');
+var requestShippoRatesInteractor = require('./_scripts/request-shippo-rates-interactor');
+//get interactors
 var createShippingLabelInteractor = require('./_scripts/create-shipping-label-interactor');
 
 var data = {
@@ -33,10 +39,20 @@ var data = {
 };
 
 var config = {
-	SHIPPO_KEY: require('./_config/creds.js').SHIPPO_KEY
+	SHIPPO_KEY: require('./_config/creds.js').SHIPPO_KEY,
+	pass_secret: 'secret',
+	token_secret: 'other_secret',
+	last_engagement_arr: [],
+	token_arr: [],
+	checkout_cache: {},
+	client_cache: {},
+	update_needed: false
 }
 
 var ext = {};
+ext.generateId = require('./_models/generate-id');
+ext.compareCreds = require('./_models/encrypt').compareCreds;
+ext.crypto = require('crypto');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -96,11 +112,15 @@ var server = http.createServer(function(req, res){
 					stream.pipe(res);
 					break;
 				default: 
-					res.write("<html><form method='post' action='/test'>");
-					res.write("<input type='hidden' name='hidden' value='haha' />");
-					res.write("<input type='submit' value='test' />");
-					res.write("</form></html>");
-					res.end();			
+					receiveCookieData(req, function(err, cookie_obj){
+						if(err) return error(res, err);
+						if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+						if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+						var args = Object.assign(cookie_obj, {path: path, path_vars: path_vars});
+						cookieRouter(data, config, args, ext, function(err, msg, template, confirm_args){
+							displayTemplate(res, msg, template, confirm_args);
+						});
+					});			
 			}
 			break;
 		case 'POST':
@@ -108,9 +128,8 @@ var server = http.createServer(function(req, res){
 				if(err) return error(res, err);
 				if(post_obj.hasOwnProperty('form_id')){
 					var args = Object.assign(post_obj, {path: path, path_vars: path_vars});
-					templateRouter(data, config, args, ext, function(err, msg, template, confirm_args){
-						console.log("err: ", err);
-						console.log("msg: ", msg);
+					postRouter(data, config, args, ext, function(err, msg, template, confirm_args){
+						if(err) return error(res, err);
 						displayTemplate(res, msg, template, confirm_args)
 					});	
 				} else {
@@ -126,17 +145,48 @@ var server = http.createServer(function(req, res){
 });
 
 
-function templateRouter(data, config, args, ext, cb){
+function postRouter(data, config, args, ext, cb){
+	switch(args.form_id){
+		case 'register-v1.1':
+			registerInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return cb(err);
+				var token_str = confirm_args.token_obj.token_id+'.'+confirm_args.token_obj.public_token+'.'+confirm_args.token_obj.cred_id;
+				confirm_args.cookie_script = 'document.cookie = "token='+token_str+'; path=/";';
+				confirm_args.Items = confirm_args.menu_items;
+				return cb(null, 'registeration successful', 'shipping-information.html', confirm_args);
+			});
+			break;
+		case 'login-v1.1':
+			loginInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return cb(err);
+				var token_str = confirm_args.token_obj.token_id+'.'+confirm_args.token_obj.public_token+'.'+confirm_args.token_obj.cred_id;
+				confirm_args.cookie_script = 'document.cookie = "token='+token_str+'; path=/";';
+				confirm_args.Items = confirm_args.menu_items;
+				return cb(null, 'login successful', 'shipping-information.html', confirm_args);
+			});
+			break;
+		case 'request-shippo-rates-v1.1':
+			console.log('im here 1A')
+			requestShippoRatesInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return cb(err);
+				confirm_args.cookie_script = '';
+				confirm_args.Items = confirm_args.menu_items;
+				confirm_args.Shipment_Object = confirm_args.shipment_obj;
+				return cb(null, 'shippo rates received', 'shipping-objects.html', confirm_args);
+			});
+			break;
+		default:
+			return cb('bad post request');
+	}
+};
+
+function cookieRouter(data, config, args, ext, cb){
 	switch(args.path[0]){
 		case 'shipping-information':
 			return cb(null, 'shipping-information')
 			break;
 		case 'create-shipping-label':
-			createShippingLabelInteractor(config, function(err, shipment){
-				console.log('err: ', err);
-				console.log('shipment: ', shipment);
-				return cb(null, '/create-shipping-label');
-			});
+			return cb(null, 'create-shipping-label');
 			break;
 		case 'print-shipping-label':
 			return cb(null, '/print-shipping-label');
