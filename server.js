@@ -171,7 +171,7 @@ function postRouter(data, config, args, ext, cb){
 				if(err) return cb(err);
 				confirm_args.cookie_script = '';
 				confirm_args.Items = confirm_args.menu_items;
-				confirm_args.Shipment_Object = confirm_args.shipment_obj;
+				confirm_args.Shipment_Object = JSON.stringify(confirm_args.shipment_obj);
 				return cb(null, 'shippo rates received', 'shipping-objects.html', confirm_args);
 			});
 			break;
