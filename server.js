@@ -99,6 +99,17 @@ var server = http.createServer(function(req, res){
 						}
 					});
 					break;
+				case '_build':
+					var file = __dirname+'/_build/'+path_vars[2];
+					fs.exists(file, function(exists){
+						if(exists){
+							var stream = fs.createReadStream(file);
+							stream.pipe(res);	
+						} else {
+							res.statusCode = 404;
+							res.end('404: file not found');
+						}
+					});
 				case 'landing':
 					var stream = fs.createReadStream(__dirname+'/_pages/landing.html');
 					stream.pipe(res);
@@ -166,7 +177,6 @@ function postRouter(data, config, args, ext, cb){
 			});
 			break;
 		case 'request-shippo-rates-v1.1':
-			console.log('im here 1A')
 			requestShippoRatesInteractor(data, config, args, ext, function(err, confirm_args){
 				if(err) return cb(err);
 				confirm_args.cookie_script = '';
