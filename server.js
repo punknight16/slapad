@@ -9,7 +9,14 @@ var registerInteractor = require('./_scripts/register-interactor');
 var loginInteractor = require('./_scripts/login-interactor');
 var requestShippoRatesInteractor = require('./_scripts/request-shippo-rates-interactor');
 //get interactors
+var shippingInformationInteractor = require('./_scripts/shipping-information-interactor');
 var createShippingLabelInteractor = require('./_scripts/create-shipping-label-interactor');
+var printShippingLabelInteractor = require('./_scripts/print-shipping-label-interactor');
+//admin interactors
+var listUserInteractor = require('./_scripts/list-user-interactor');
+var listCouponInteractor = require('./_scripts/list-coupon-interactor');
+var listLabelInteractor = require('./_scripts/list-label-interactor');
+var listTransactionInteractor = require('./_scripts/list-transaction-interactor');
 
 var data = {
 	universal_data: ["cred-0vndq7krkn6o", 'engagement-0u6v80trf7q8'],
@@ -22,7 +29,13 @@ var data = {
 		}
 	],
 	name_data: [
-		{universal_id: 'cred-0vndq7krkn6o', universal_name: 'demo-user'}
+		{universal_id: 'cred-0vndq7krkn6o', universal_name: 'demo-user'},
+		{universal_id: 'c0', universal_name: 'kjourneys'},
+		{universal_id: 'c1', universal_name: 'punknight'},
+		{universal_id: 'c2', universal_name: 'kyujin'},
+		{universal_id: 'a0', universal_name: 'jinsoo gamer lounge'},
+		{universal_id: 'a1', universal_name: 'bamma jamma inc'},
+		{universal_id: 'a2', universal_name: '#SaveTheDate, llc.'}
 	],
 	permission_data: [
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/menu', universal_id: 'menu-0'},
@@ -110,6 +123,7 @@ var server = http.createServer(function(req, res){
 							res.end('404: file not found');
 						}
 					});
+					break;
 				case 'landing':
 					var stream = fs.createReadStream(__dirname+'/_pages/landing.html');
 					stream.pipe(res);
@@ -185,6 +199,9 @@ function postRouter(data, config, args, ext, cb){
 				return cb(null, 'shippo rates received', 'shipping-objects.html', confirm_args);
 			});
 			break;
+		case 'deactivate-account-v1.1':
+			return cb(null, 'deactivated-account', 'register.html');
+			break;
 		default:
 			return cb('bad post request');
 	}
@@ -193,30 +210,130 @@ function postRouter(data, config, args, ext, cb){
 function cookieRouter(data, config, args, ext, cb){
 	switch(args.path[0]){
 		case 'shipping-information':
-			return cb(null, 'shipping-information')
+			shippingInformationInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return cb(err);
+				confirm_args.cookie_script = '';
+				confirm_args.Items = confirm_args.menu_items;
+				return cb(null, '', 'shipping-information.html', confirm_args);
+			});
 			break;
 		case 'create-shipping-label':
-			return cb(null, 'create-shipping-label');
+			createShippingLabelInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return cb(err);
+				confirm_args.cookie_script = '';
+				confirm_args.Items = confirm_args.menu_items;
+				return cb(null, '', 'create-shipping-label.html', confirm_args);
+			});
 			break;
 		case 'print-shipping-label':
-			return cb(null, '/print-shipping-label');
+			printShippingLabelInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return cb(err);
+				confirm_args.cookie_script = '';
+				confirm_args.Items = confirm_args.menu_items;
+				return cb(null, '', 'print-shipping-label.html', confirm_args);
+			});
 			break;
-		case 'users':
-			return cb(null,  '/users');
+		case 'user':
+			listUserInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return error(res, err);
+				confirm_args.Items = confirm_args.menu_items;
+				confirm_args.page_arr = new Array(confirm_args.user_pages).fill({a:1}).map((item, index)=>{ 
+					item = {};
+					item.active = '';
+					if((confirm_args.user_cursor-1)==index){
+						item.active = 'active'
+					}
+					item.index = index+1;
+					return item;
+				});
+				var sorted_users = confirm_args.user_arr.sort((a, b)=>{return b.engagements_per_day-a.engagements_per_day});
+				swapIdForName(data.name_data, sorted_users, function(err, swapped_data){
+					confirm_args.Objects = swapped_data;
+					return cb(null, '', 'user.html', confirm_args);
+				});
+			});
 			break;
-		case 'coupons':
-			return cb(null, '/coupons');
+		case 'coupon':
+			listCouponInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return error(res, err);
+				confirm_args.Items = confirm_args.menu_items;
+				confirm_args.page_arr = new Array(confirm_args.coupon_pages).fill({a:1}).map((item, index)=>{ 
+					item = {};
+					item.active = '';
+					if((confirm_args.coupon_cursor-1)==index){
+						item.active = 'active'
+					}
+					item.index = index+1;
+					return item;
+				});
+				var sorted_coupons = confirm_args.coupon_arr.sort((a, b)=>{return b.num_of_unredeemed-a.num_of_unredeemed});
+				swapIdForName(data.name_data, sorted_coupons, function(err, swapped_data){
+					confirm_args.Objects = swapped_data;
+					return cb(null, '', 'coupon.html', confirm_args);
+				});
+			});
 			break;
-		case 'labels':
-			return cb(null, '/labels');
+		case 'label':
+			listLabelInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return error(res, err);
+				confirm_args.Items = confirm_args.menu_items;
+				confirm_args.page_arr = new Array(confirm_args.label_pages).fill({a:1}).map((item, index)=>{ 
+					item = {};
+					item.active = '';
+					if((confirm_args.label_cursor-1)==index){
+						item.active = 'active'
+					}
+					item.index = index+1;
+					return item;
+				});
+				var sorted_labels = confirm_args.label_arr.sort((a, b)=>{return b.date_last_active-a.date_last_active});
+				swapIdForName(data.name_data, sorted_labels, function(err, swapped_data){
+					confirm_args.Objects = swapped_data;
+					return cb(null, '', 'label.html', confirm_args);
+				});
+			});
+			break;
+		case 'transaction':
+			listTransactionInteractor(data, config, args, ext, function(err, confirm_args){
+				if(err) return error(res, err);
+				confirm_args.Items = confirm_args.menu_items;
+				confirm_args.page_arr = new Array(confirm_args.transaction_pages).fill({a:1}).map((item, index)=>{ 
+					item = {};
+					item.active = '';
+					if((confirm_args.label_cursor-1)==index){
+						item.active = 'active'
+					}
+					item.index = index+1;
+					return item;
+				});
+				swapIdForName(data.name_data, confirm_args.transaction_arr, function(err, swapped_data){
+					confirm_args.Objects = swapped_data;
+					return cb(null, '', 'transaction.html', confirm_args);
+				});
+			});
 			break;
 		case 'logout':
-			return cb(null, 'logout');
-			break;
-		case 'deactivate-account':
-			return cb(null, 'deactivate-account');
+			return cb(null, 'logout successful', 'login.html');
 			break;
 		default:
 			return cb('bad request');
 	}
 };
+
+function swapIdForName(name_data, args_data, cb){
+	var swapped_data = args_data.map((obj)=>{
+		var swapped_obj = {}
+		for (var prop in obj) {
+			var uni_obj = name_data.find((item)=>{
+				return (item.universal_id == obj[prop])
+			})
+			if(typeof uni_obj != 'undefined'){
+				swapped_obj[prop] = uni_obj.universal_name;
+			} else {
+				swapped_obj[prop] = obj[prop];
+			}
+		}
+		return swapped_obj;
+	});
+	return cb(null, swapped_data);
+}

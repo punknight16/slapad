@@ -1,0 +1,247 @@
+<html>
+<head>
+  <title>Slap-Ad</title>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Indie+Flower">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<style>
+		#wrapper {
+			margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+			/*
+			border: 1px solid gray;
+			border-radius: 3px;
+			padding: 3px;*/
+		}
+		html,
+body {
+  overflow-x: hidden; /* Prevent scroll on narrow devices */
+}
+body {
+  padding-top: 56px;
+}
+@media (max-width: 767.98px) {
+  .offcanvas-collapse {
+    position: fixed;
+    top: 56px; /* Height of navbar */
+    bottom: 0;
+    width: 100%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow-y: auto;
+    background-color: var(--gray-dark);
+    transition: -webkit-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+    transition: transform .3s ease-in-out, -webkit-transform .3s ease-in-out;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+  .offcanvas-collapse.open {
+    -webkit-transform: translateX(-1rem);
+    transform: translateX(-1rem); /* Account for horizontal padding on navbar */
+  }
+}
+.nav-scroller {
+  position: relative;
+  z-index: 2;
+  height: 2.75rem;
+  overflow-y: hidden;
+}
+.nav-scroller .nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  padding-bottom: 1rem;
+  margin-top: -1px;
+  overflow-x: auto;
+  color: rgba(255, 255, 255, .75);
+  text-align: center;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-underline .nav-link {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: .875rem;
+  color: var(--secondary);
+}
+.nav-underline .nav-link:hover {
+  color: var(--blue);
+}
+.nav-underline .active {
+  font-weight: 500;
+  color: var(--gray-dark);
+}
+.text-white-50 { color: rgba(255, 255, 255, .5); }
+.bg-purple { background-color: #435d7d; }
+.border-bottom { border-bottom: 1px solid #e5e5e5; }
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+.lh-100 { line-height: 1; }
+.lh-125 { line-height: 1.25; }
+.lh-150 { line-height: 1.5; }
+.custom {
+    width: 42px !important;
+}
+.icon {
+  fill: gray;
+}
+.logo {
+  font-family: 'Indie Flower', serif;
+}
+
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand logo" href="/landing">Slap-Ad</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>     
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          {{#Items}}
+          <li class="nav-item {{active}}">
+            <a class="nav-link" href="{{link}}">{{value}}{{{sr}}}</a>
+          </li>
+          {{/Items}}
+        </ul>
+        
+        <form class="form-inline my-2 my-lg-0" action='/documentation'>
+          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit">?</button>
+        </form>
+        <div class="form-inline my-2 my-lg-0">
+          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit" data-toggle="dropdown">
+           &#9776;
+          </button>
+          
+            <div class="dropdown-menu dropdown-menu-right float-right" style="position:absolute;">
+              <a class="dropdown-item" href="/logout">Logout</a>
+              <button class="dropdown-item" data-toggle="modal" data-target="#deactivateModal">Deactivate Account</button>
+            </div>
+          
+        </div>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+
+      <div id="wrapper">
+      	<div class="p-3 text-white-50 bg-purple rounded-top box-shadow" style="height: 70px">
+          <div class="lh-100">
+            <h6 class="mb-0 text-white lh-100">Coupon</h6>
+            <small>Manager</small>
+          </div>
+        </div>
+	        
+         
+	        
+	      
+				<table class="table table-striped">
+				  <thead>
+				  	<tr style="border-bottom: 2px solid #dee2e6">
+				    	<th class="border-bottom-0">Coupons</th>
+              <th class="border-bottom-0"></th>
+              <th class="d-flex justify-content-end border-bottom-0"># of Unredeemed</th>
+				  	</tr>
+				  </thead>
+				  <tbody>
+            {{#Objects}}
+  					  <tr class='border-top'>
+  					    <td><a class='style-2'>{{coupon_id}}</a></td>
+                <td>{{total}}</td>
+                <td class="d-flex justify-content-end border-top-0">
+                  {{num_of_unredeemed}}
+                </td>
+  					  </tr>
+					  {{/Objects}}
+					</tbody>
+				</table>
+        <div class='d-flex justify-content-between'>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination mb-0">
+              <li class="page-item disabled">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              {{#page_arr}}
+              <li class="page-item {{active}}"><a class="page-link" href="/browse?cursor={{index}}">{{index}}</a></li>
+              {{/page_arr}}
+              
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          
+        </div>
+			</div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Save Goal</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action='/api/add-goal' method='post'>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="goalInput">Goal Input</label>
+                <input type="text" class="form-control" name="goalInput" aria-describedby="goalHelp" placeholder="Enter goal">
+                <input type='hidden' name="form-id" value='add-goal-form-v1.1' />
+                <small id="goalHelp" class="form-text text-muted">Enter a short goal name</small>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Goal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Deactivate Account</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action='/deactivate-account' method='post'>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="emailInput">Email Confirmation</label>
+              <input type="text" class="form-control" name="emailInput" aria-describedby="goalHelp" placeholder="Enter email">
+              <input type='hidden' name="form_id" value='deactivate-account-v1.1' />
+              <small id="deactivateHelp" class="form-text text-muted">Enter your email to confirm account deactivation</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Deactivate Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<body>
+</html>
